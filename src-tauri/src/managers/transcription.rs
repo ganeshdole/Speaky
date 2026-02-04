@@ -1,6 +1,7 @@
 use crate::audio_toolkit::{apply_custom_words, filter_transcription_output};
 use crate::managers::model::{EngineType, ModelManager};
-use crate::settings::{get_settings, ModelUnloadTimeout};
+use crate::settings::{get_settings, ModelUnloadTimeout, TranscriptionMode};
+use crate::transcription_cloud::{transcribe_with_cloud, CloudTranscriptionRequest};
 use anyhow::Result;
 use log::{debug, error, info, warn};
 use serde::Serialize;
@@ -318,6 +319,11 @@ impl TranscriptionManager {
 
     /// Kicks off the model loading in a background thread if it's not already loaded
     pub fn initiate_model_load(&self) {
+        let settings = get_settings(&self.app_handle);
+        if settings.transcription_mode == TranscriptionMode::Cloud {
+            return;
+        }
+
         let mut is_loading = self.is_loading.lock().unwrap();
         if *is_loading || self.is_model_loaded() {
             return;
@@ -341,7 +347,7 @@ impl TranscriptionManager {
         current_model.clone()
     }
 
-    pub fn transcribe(&self, audio: Vec<f32>) -> Result<String> {
+    pub async fn transcribe(&self, audio: Vec<f32>) -> Result<String> {
         // Update last activity timestamp
         self.last_activity.store(
             SystemTime::now()
@@ -361,6 +367,73 @@ impl TranscriptionManager {
             return Ok(String::new());
         }
 
+        // Get current settings for configuration
+        let settings = get_settings(&self.app_handle);
+
+        if settings.transcription_mode == TranscriptionMode::Cloud {
+            let provider = settings
+                .active_transcription_provider()
+                .cloned()
+                .ok_or_else(|| anyhow::anyhow!("No cloud provider is configured."))?;
+
+            let api_key = settings
+                .transcription_api_keys
+                .get(&provider.id)
+                .cloned()
+                .unwrap_or_default();
+
+            let model = settings
+                .transcription_models
+                .get(&provider.id)
+                .cloned()
+                .unwrap_or_default();
+
+            if api_key.trim().is_empty() {
+                return Err(anyhow::anyhow!(
+                    "Cloud transcription requires an API key."
+                ));
+            }
+
+            if model.trim().is_empty() {
+                return Err(anyhow::anyhow!(
+                    "Cloud transcription requires a model selection."
+                ));
+            }
+
+            let language = if settings.selected_language == "auto" {
+                None
+            } else if settings.selected_language == "zh-Hans"
+                || settings.selected_language == "zh-Hant"
+            {
+                Some("zh".to_string())
+            } else {
+                Some(settings.selected_language.clone())
+            };
+
+            let text = transcribe_with_cloud(CloudTranscriptionRequest {
+                audio,
+                api_key,
+                model,
+                provider,
+                language,
+                translate_to_english: settings.translate_to_english,
+            })
+            .await?;
+
+            let corrected_result = if !settings.custom_words.is_empty() {
+                apply_custom_words(
+                    &text,
+                    &settings.custom_words,
+                    settings.word_correction_threshold,
+                )
+            } else {
+                text
+            };
+
+            let filtered_result = filter_transcription_output(&corrected_result);
+            return Ok(filtered_result);
+        }
+
         // Check if model is loaded, if not try to load it
         {
             // If the model is loading, wait for it to complete.
@@ -374,9 +447,6 @@ impl TranscriptionManager {
                 return Err(anyhow::anyhow!("Model is not loaded for transcription."));
             }
         }
-
-        // Get current settings for configuration
-        let settings = get_settings(&self.app_handle);
 
         // Perform transcription with the appropriate engine
         let result = {

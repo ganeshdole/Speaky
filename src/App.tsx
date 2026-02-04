@@ -9,14 +9,18 @@ import {
 import "./App.css";
 import AccessibilityPermissions from "./components/AccessibilityPermissions";
 import Footer from "./components/footer";
-import Onboarding, { AccessibilityOnboarding } from "./components/onboarding";
+import Onboarding, {
+  AccessibilityOnboarding,
+  CloudOnboarding,
+  TranscriptionModeOnboarding,
+} from "./components/onboarding";
 import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
 import { commands } from "@/bindings";
 import { getLanguageDirection, initializeRTL } from "@/lib/utils/rtl";
 
-type OnboardingStep = "accessibility" | "model" | "done";
+type OnboardingStep = "accessibility" | "mode" | "model" | "cloud" | "done";
 
 const renderSettingsContent = (section: SidebarSection) => {
   const ActiveComponent =
@@ -29,9 +33,8 @@ function App() {
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep | null>(
     null,
   );
-  // Track if this is a returning user who just needs to grant permissions
-  // (vs a new user who needs full onboarding including model selection)
-  const [isReturningUser, setIsReturningUser] = useState(false);
+  const [postAccessibilityStep, setPostAccessibilityStep] =
+    useState<OnboardingStep>("mode");
   const [currentSection, setCurrentSection] =
     useState<SidebarSection>("general");
   const { settings, updateSetting } = useSettings();
@@ -95,50 +98,74 @@ function App() {
 
   const checkOnboardingStatus = async () => {
     try {
+      const settingsResult = await commands.getAppSettings();
+      const settingsData =
+        settingsResult.status === "ok" ? settingsResult.data : null;
+      const transcriptionMode =
+        settingsData?.transcription_mode ?? "local";
+      const providerId =
+        settingsData?.transcription_provider_id ?? "groq";
+      const apiKey =
+        settingsData?.transcription_api_keys?.[providerId] ?? "";
+      const model =
+        settingsData?.transcription_models?.[providerId] ?? "";
+
+      const cloudReady =
+        transcriptionMode === "cloud" &&
+        apiKey.trim().length > 0 &&
+        model.trim().length > 0;
+
       // Check if they have any models available
       const result = await commands.hasAnyModelsAvailable();
       const hasModels = result.status === "ok" && result.data;
+      const returningReady =
+        transcriptionMode === "cloud" ? cloudReady : hasModels;
+      const nextStep: OnboardingStep = returningReady ? "done" : "mode";
 
-      if (hasModels) {
-        // Returning user - but check if they need to grant permissions on macOS
-        setIsReturningUser(true);
-        if (platform() === "macos") {
-          try {
-            const [hasAccessibility, hasMicrophone] = await Promise.all([
-              checkAccessibilityPermission(),
-              checkMicrophonePermission(),
-            ]);
-            if (!hasAccessibility || !hasMicrophone) {
-              // Missing permissions - show accessibility onboarding
-              setOnboardingStep("accessibility");
-              return;
-            }
-          } catch (e) {
-            console.warn("Failed to check permissions:", e);
-            // If we can't check, proceed to main app and let them fix it there
+      // Returning user - but check if they need to grant permissions on macOS
+      if (platform() === "macos") {
+        try {
+          const [hasAccessibility, hasMicrophone] = await Promise.all([
+            checkAccessibilityPermission(),
+            checkMicrophonePermission(),
+          ]);
+          if (!hasAccessibility || !hasMicrophone) {
+            // Missing permissions - show accessibility onboarding
+            setPostAccessibilityStep(nextStep);
+            setOnboardingStep("accessibility");
+            return;
           }
+        } catch (e) {
+          console.warn("Failed to check permissions:", e);
+          // If we can't check, proceed to main app and let them fix it there
         }
-        setOnboardingStep("done");
-      } else {
-        // New user - start full onboarding
-        setIsReturningUser(false);
-        setOnboardingStep("accessibility");
       }
+
+      setOnboardingStep(nextStep);
     } catch (error) {
       console.error("Failed to check onboarding status:", error);
+      setPostAccessibilityStep("mode");
       setOnboardingStep("accessibility");
     }
   };
 
   const handleAccessibilityComplete = () => {
-    // Returning users already have models, skip to main app
-    // New users need to select a model
-    setOnboardingStep(isReturningUser ? "done" : "model");
+    setOnboardingStep(postAccessibilityStep);
   };
 
   const handleModelSelected = () => {
     // Transition to main app - user has started a download
     setOnboardingStep("done");
+  };
+
+  const handleSelectLocal = async () => {
+    await updateSetting("transcription_mode", "local");
+    setOnboardingStep("model");
+  };
+
+  const handleSelectCloud = async () => {
+    await updateSetting("transcription_mode", "cloud");
+    setOnboardingStep("cloud");
   };
 
   // Still checking onboarding status
@@ -151,7 +178,30 @@ function App() {
   }
 
   if (onboardingStep === "model") {
-    return <Onboarding onModelSelected={handleModelSelected} />;
+    return (
+      <Onboarding
+        onModelSelected={handleModelSelected}
+        onUseCloud={handleSelectCloud}
+      />
+    );
+  }
+
+  if (onboardingStep === "mode") {
+    return (
+      <TranscriptionModeOnboarding
+        onSelectLocal={handleSelectLocal}
+        onSelectCloud={handleSelectCloud}
+      />
+    );
+  }
+
+  if (onboardingStep === "cloud") {
+    return (
+      <CloudOnboarding
+        onComplete={handleModelSelected}
+        onBack={() => setOnboardingStep("mode")}
+      />
+    );
   }
 
   return (

@@ -8,6 +8,8 @@ use tauri_plugin_store::StoreExt;
 
 pub const APPLE_INTELLIGENCE_PROVIDER_ID: &str = "apple_intelligence";
 pub const APPLE_INTELLIGENCE_DEFAULT_MODEL_ID: &str = "Apple Intelligence";
+pub const GROQ_TRANSCRIPTION_PROVIDER_ID: &str = "groq";
+pub const GROQ_TRANSCRIPTION_DEFAULT_MODEL_ID: &str = "whisper-large-v3-turbo";
 
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "lowercase")]
@@ -90,6 +92,24 @@ pub struct LLMPrompt {
     pub id: String,
     pub name: String,
     pub prompt: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
+#[serde(rename_all = "lowercase")]
+pub enum TranscriptionMode {
+    Local,
+    Cloud,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Type)]
+pub struct TranscriptionProvider {
+    pub id: String,
+    pub label: String,
+    pub base_url: String,
+    #[serde(default)]
+    pub allow_base_url_edit: bool,
+    #[serde(default)]
+    pub models_endpoint: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
@@ -259,6 +279,16 @@ pub struct AppSettings {
     pub update_checks_enabled: bool,
     #[serde(default = "default_model")]
     pub selected_model: String,
+    #[serde(default = "default_transcription_mode")]
+    pub transcription_mode: TranscriptionMode,
+    #[serde(default = "default_transcription_provider_id")]
+    pub transcription_provider_id: String,
+    #[serde(default = "default_transcription_providers")]
+    pub transcription_providers: Vec<TranscriptionProvider>,
+    #[serde(default = "default_transcription_api_keys")]
+    pub transcription_api_keys: HashMap<String, String>,
+    #[serde(default = "default_transcription_models")]
+    pub transcription_models: HashMap<String, String>,
     #[serde(default = "default_always_on_microphone")]
     pub always_on_microphone: bool,
     #[serde(default)]
@@ -321,6 +351,50 @@ pub struct AppSettings {
 
 fn default_model() -> String {
     "".to_string()
+}
+
+fn default_transcription_mode() -> TranscriptionMode {
+    TranscriptionMode::Local
+}
+
+fn default_transcription_provider_id() -> String {
+    GROQ_TRANSCRIPTION_PROVIDER_ID.to_string()
+}
+
+fn default_transcription_providers() -> Vec<TranscriptionProvider> {
+    vec![TranscriptionProvider {
+        id: GROQ_TRANSCRIPTION_PROVIDER_ID.to_string(),
+        label: "Groq".to_string(),
+        base_url: "https://api.groq.com/openai/v1".to_string(),
+        allow_base_url_edit: false,
+        models_endpoint: None,
+    }]
+}
+
+fn default_transcription_api_keys() -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    for provider in default_transcription_providers() {
+        map.insert(provider.id, String::new());
+    }
+    map
+}
+
+fn default_transcription_model_for_provider(provider_id: &str) -> String {
+    if provider_id == GROQ_TRANSCRIPTION_PROVIDER_ID {
+        return GROQ_TRANSCRIPTION_DEFAULT_MODEL_ID.to_string();
+    }
+    String::new()
+}
+
+fn default_transcription_models() -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    for provider in default_transcription_providers() {
+        map.insert(
+            provider.id.clone(),
+            default_transcription_model_for_provider(&provider.id),
+        );
+    }
+    map
 }
 
 fn default_always_on_microphone() -> bool {
@@ -500,6 +574,45 @@ fn default_post_process_prompts() -> Vec<LLMPrompt> {
     }]
 }
 
+fn ensure_transcription_defaults(settings: &mut AppSettings) -> bool {
+    let mut changed = false;
+    for provider in default_transcription_providers() {
+        if settings
+            .transcription_providers
+            .iter()
+            .all(|existing| existing.id != provider.id)
+        {
+            settings.transcription_providers.push(provider.clone());
+            changed = true;
+        }
+
+        if !settings.transcription_api_keys.contains_key(&provider.id) {
+            settings
+                .transcription_api_keys
+                .insert(provider.id.clone(), String::new());
+            changed = true;
+        }
+
+        let default_model = default_transcription_model_for_provider(&provider.id);
+        match settings.transcription_models.get_mut(&provider.id) {
+            Some(existing) => {
+                if existing.is_empty() && !default_model.is_empty() {
+                    *existing = default_model.clone();
+                    changed = true;
+                }
+            }
+            None => {
+                settings
+                    .transcription_models
+                    .insert(provider.id.clone(), default_model);
+                changed = true;
+            }
+        }
+    }
+
+    changed
+}
+
 fn ensure_post_process_defaults(settings: &mut AppSettings) -> bool {
     let mut changed = false;
     for provider in default_post_process_providers() {
@@ -583,6 +696,11 @@ pub fn get_default_settings() -> AppSettings {
         autostart_enabled: default_autostart_enabled(),
         update_checks_enabled: default_update_checks_enabled(),
         selected_model: "".to_string(),
+        transcription_mode: default_transcription_mode(),
+        transcription_provider_id: default_transcription_provider_id(),
+        transcription_providers: default_transcription_providers(),
+        transcription_api_keys: default_transcription_api_keys(),
+        transcription_models: default_transcription_models(),
         always_on_microphone: false,
         selected_microphone: None,
         clamshell_microphone: None,
@@ -636,6 +754,18 @@ impl AppSettings {
             .iter_mut()
             .find(|provider| provider.id == provider_id)
     }
+
+    pub fn active_transcription_provider(&self) -> Option<&TranscriptionProvider> {
+        self.transcription_providers
+            .iter()
+            .find(|provider| provider.id == self.transcription_provider_id)
+    }
+
+    pub fn transcription_provider(&self, provider_id: &str) -> Option<&TranscriptionProvider> {
+        self.transcription_providers
+            .iter()
+            .find(|provider| provider.id == provider_id)
+    }
 }
 
 pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
@@ -682,6 +812,10 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
         default_settings
     };
 
+    if ensure_transcription_defaults(&mut settings) {
+        store.set("settings", serde_json::to_value(&settings).unwrap());
+    }
+
     if ensure_post_process_defaults(&mut settings) {
         store.set("settings", serde_json::to_value(&settings).unwrap());
     }
@@ -705,6 +839,10 @@ pub fn get_settings(app: &AppHandle) -> AppSettings {
         store.set("settings", serde_json::to_value(&default_settings).unwrap());
         default_settings
     };
+
+    if ensure_transcription_defaults(&mut settings) {
+        store.set("settings", serde_json::to_value(&settings).unwrap());
+    }
 
     if ensure_post_process_defaults(&mut settings) {
         store.set("settings", serde_json::to_value(&settings).unwrap());

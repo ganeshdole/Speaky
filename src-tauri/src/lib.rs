@@ -15,6 +15,7 @@ mod shortcut;
 mod signal_handle;
 mod tray;
 mod tray_i18n;
+mod transcription_cloud;
 mod utils;
 use specta_typescript::{BigIntExportBehavior, Typescript};
 use tauri_specta::{collect_commands, Builder};
@@ -259,6 +260,10 @@ pub fn run() {
         shortcut::change_post_process_api_key_setting,
         shortcut::change_post_process_model_setting,
         shortcut::set_post_process_provider,
+        shortcut::set_transcription_mode,
+        shortcut::set_transcription_provider,
+        shortcut::set_transcription_api_key,
+        shortcut::set_transcription_model,
         shortcut::fetch_post_process_models,
         shortcut::add_post_process_prompt,
         shortcut::update_post_process_prompt,

@@ -47,6 +47,15 @@ interface SettingsStore {
   updatePostProcessModel: (providerId: string, model: string) => Promise<void>;
   fetchPostProcessModels: (providerId: string) => Promise<string[]>;
   setPostProcessModelOptions: (providerId: string, models: string[]) => void;
+  setTranscriptionProvider: (providerId: string) => Promise<void>;
+  updateTranscriptionApiKey: (
+    providerId: string,
+    apiKey: string,
+  ) => Promise<void>;
+  updateTranscriptionModel: (
+    providerId: string,
+    model: string,
+  ) => Promise<void>;
 
   // Internal state setters
   setSettings: (settings: Settings | null) => void;
@@ -119,6 +128,8 @@ const settingUpdaters: {
     commands.changePostProcessEnabledSetting(value as boolean),
   post_process_selected_prompt_id: (value) =>
     commands.setPostProcessSelectedPrompt(value as string),
+  transcription_mode: (value) =>
+    commands.setTranscriptionMode(value as any),
   mute_while_recording: (value) =>
     commands.changeMuteWhileRecordingSetting(value as boolean),
   append_trailing_space: (value) =>
@@ -392,6 +403,70 @@ export const useSettingsStore = create<SettingsStore>()(
               : null,
           }));
         }
+      } finally {
+        setUpdating(updateKey, false);
+      }
+    },
+
+    setTranscriptionProvider: async (providerId) => {
+      const { settings, setUpdating, refreshSettings } = get();
+      const updateKey = "transcription_provider_id";
+      const previousId = settings?.transcription_provider_id ?? null;
+
+      setUpdating(updateKey, true);
+
+      if (settings) {
+        set((state) => ({
+          settings: state.settings
+            ? { ...state.settings, transcription_provider_id: providerId }
+            : null,
+        }));
+      }
+
+      try {
+        await commands.setTranscriptionProvider(providerId);
+        await refreshSettings();
+      } catch (error) {
+        console.error("Failed to set transcription provider:", error);
+        if (previousId !== null) {
+          set((state) => ({
+            settings: state.settings
+              ? { ...state.settings, transcription_provider_id: previousId }
+              : null,
+          }));
+        }
+      } finally {
+        setUpdating(updateKey, false);
+      }
+    },
+
+    updateTranscriptionApiKey: async (providerId, apiKey) => {
+      const { setUpdating, refreshSettings } = get();
+      const updateKey = `transcription_api_key:${providerId}`;
+
+      setUpdating(updateKey, true);
+
+      try {
+        await commands.setTranscriptionApiKey(providerId, apiKey);
+        await refreshSettings();
+      } catch (error) {
+        console.error("Failed to update transcription API key:", error);
+      } finally {
+        setUpdating(updateKey, false);
+      }
+    },
+
+    updateTranscriptionModel: async (providerId, model) => {
+      const { setUpdating, refreshSettings } = get();
+      const updateKey = `transcription_model:${providerId}`;
+
+      setUpdating(updateKey, true);
+
+      try {
+        await commands.setTranscriptionModel(providerId, model);
+        await refreshSettings();
+      } catch (error) {
+        console.error("Failed to update transcription model:", error);
       } finally {
         setUpdating(updateKey, false);
       }

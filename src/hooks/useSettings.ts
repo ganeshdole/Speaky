@@ -41,6 +41,12 @@ interface UseSettingsReturn {
   ) => Promise<void>;
   updatePostProcessModel: (providerId: string, model: string) => Promise<void>;
   fetchPostProcessModels: (providerId: string) => Promise<string[]>;
+  setTranscriptionProvider: (providerId: string) => Promise<void>;
+  updateTranscriptionApiKey: (
+    providerId: string,
+    apiKey: string,
+  ) => Promise<void>;
+  updateTranscriptionModel: (providerId: string, model: string) => Promise<void>;
 }
 
 export const useSettings = (): UseSettingsReturn => {
@@ -74,5 +80,8 @@ export const useSettings = (): UseSettingsReturn => {
     updatePostProcessApiKey: store.updatePostProcessApiKey,
     updatePostProcessModel: store.updatePostProcessModel,
     fetchPostProcessModels: store.fetchPostProcessModels,
+    setTranscriptionProvider: store.setTranscriptionProvider,
+    updateTranscriptionApiKey: store.updateTranscriptionApiKey,
+    updateTranscriptionModel: store.updateTranscriptionModel,
   };
 };

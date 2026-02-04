@@ -6,9 +6,13 @@ import HandyTextLogo from "../icons/HandyTextLogo";
 
 interface OnboardingProps {
   onModelSelected: () => void;
+  onUseCloud?: () => void;
 }
 
-const Onboarding: React.FC<OnboardingProps> = ({ onModelSelected }) => {
+const Onboarding: React.FC<OnboardingProps> = ({
+  onModelSelected,
+  onUseCloud,
+}) => {
   const { t } = useTranslation();
   const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
   const [downloading, setDownloading] = useState(false);
@@ -71,6 +75,17 @@ const Onboarding: React.FC<OnboardingProps> = ({ onModelSelected }) => {
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4 shrink-0">
             <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
+
+        {onUseCloud && (
+          <div className="mb-4 shrink-0">
+            <button
+              className="text-sm font-medium text-logo-primary hover:underline"
+              onClick={onUseCloud}
+            >
+              {t("onboarding.useCloud")}
+            </button>
           </div>
         )}
 

@@ -21,8 +21,8 @@ use tauri_plugin_autostart::ManagerExt;
 
 use crate::settings::{
     self, get_settings, ClipboardHandling, KeyboardImplementation, LLMPrompt, OverlayPosition,
-    PasteMethod, ShortcutBinding, SoundTheme, APPLE_INTELLIGENCE_DEFAULT_MODEL_ID,
-    APPLE_INTELLIGENCE_PROVIDER_ID,
+    PasteMethod, ShortcutBinding, SoundTheme, TranscriptionMode,
+    APPLE_INTELLIGENCE_DEFAULT_MODEL_ID, APPLE_INTELLIGENCE_PROVIDER_ID,
 };
 use crate::tray;
 
@@ -737,6 +737,20 @@ fn validate_provider_exists(
     Ok(())
 }
 
+fn validate_transcription_provider_exists(
+    settings: &settings::AppSettings,
+    provider_id: &str,
+) -> Result<(), String> {
+    if !settings
+        .transcription_providers
+        .iter()
+        .any(|provider| provider.id == provider_id)
+    {
+        return Err(format!("Provider '{}' not found", provider_id));
+    }
+    Ok(())
+}
+
 #[tauri::command]
 #[specta::specta]
 pub fn change_post_process_api_key_setting(
@@ -771,6 +785,55 @@ pub fn set_post_process_provider(app: AppHandle, provider_id: String) -> Result<
     let mut settings = settings::get_settings(&app);
     validate_provider_exists(&settings, &provider_id)?;
     settings.post_process_provider_id = provider_id;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn set_transcription_mode(app: AppHandle, mode: TranscriptionMode) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.transcription_mode = mode;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn set_transcription_provider(app: AppHandle, provider_id: String) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    validate_transcription_provider_exists(&settings, &provider_id)?;
+    settings.transcription_provider_id = provider_id;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn set_transcription_api_key(
+    app: AppHandle,
+    provider_id: String,
+    api_key: String,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    validate_transcription_provider_exists(&settings, &provider_id)?;
+    settings
+        .transcription_api_keys
+        .insert(provider_id, api_key);
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn set_transcription_model(
+    app: AppHandle,
+    provider_id: String,
+    model: String,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    validate_transcription_provider_exists(&settings, &provider_id)?;
+    settings.transcription_models.insert(provider_id, model);
     settings::write_settings(&app, settings);
     Ok(())
 }
