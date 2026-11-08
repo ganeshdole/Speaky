@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Cog, FlaskConical, History, Info, Sparkles, Cpu } from "lucide-react";
 import SpeakyTextLogo from "./icons/SpeakyTextLogo";
-import HandyHand from "./icons/HandyHand";
+import SpeakyBubble from "./icons/SpeakyBubble";
 import { useSettings } from "../hooks/useSettings";
 import {
   GeneralSettings,
@@ -34,7 +34,7 @@ interface SectionConfig {
 export const SECTIONS_CONFIG = {
   general: {
     labelKey: "sidebar.general",
-    icon: HandyHand,
+    icon: SpeakyBubble,
     component: GeneralSettings,
     enabled: () => true,
   },

@@ -20,7 +20,7 @@ export const ProgressLine: React.FC<ProgressLineProps> = ({
     className={`block overflow-hidden rounded-full bg-line ${className}`}
   >
     <i
-      className={`block h-full rounded-[inherit] bg-background-ui transition-[width] duration-[120ms] ease-linear ${
+      className={`block h-full rounded-[inherit] bg-control-on transition-[width] duration-[120ms] ease-linear ${
         busy ? "animate-pulse motion-reduce:animate-none" : ""
       }`}
       style={{

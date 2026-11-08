@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f8ff"/><stop offset="1" stop-color="#d4e6ff"/></linearGradient>
+    <filter id="drop" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0b1a3a" flood-opacity=".22"/></filter>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)" filter="url(#drop)"/>
+  <rect x="100.5" y="100.5" width="823" height="823" rx="184.5" fill="none" stroke="#0b1a3a" stroke-opacity=".08"/>
+  <svg x="170" y="200" width="700" height="612" viewBox="0 0 240 210">
+  <defs>
+    <clipPath id="body"><path id="bubble" d="M104 18C158 18 190 48 190 92C190 136 158 162 108 162L88 162C78 176 60 188 34 194C46 180 52 168 52 154C30 140 18 118 18 92C18 48 50 18 104 18Z"/></clipPath>
+  </defs>
+  <g transform="rotate(-6 104 100)"><g clip-path="url(#body)">
+    <rect width="240" height="210" fill="#3f86f0"/>
+    <ellipse cx="96" cy="84" rx="92" ry="74" fill="#78b3ff"/>
+    <ellipse cx="62" cy="48" rx="26" ry="14" fill="#fff" opacity=".55" transform="rotate(-24 62 48)"/>
+  </g>
+  <path d="M104 18C158 18 190 48 190 92C190 136 158 162 108 162L88 162C78 176 60 188 34 194C46 180 52 168 52 154C30 140 18 118 18 92C18 48 50 18 104 18Z" fill="none" stroke="#16213d" stroke-width="8" stroke-linejoin="round"/>
+  <!-- eyes -->
+  <ellipse cx="82" cy="82" rx="10" ry="17" fill="#16213d"/>
+  <ellipse cx="126" cy="82" rx="10" ry="17" fill="#16213d"/>
+  <circle cx="79" cy="74" r="4" fill="#fff"/>
+  <circle cx="123" cy="74" r="4" fill="#fff"/>
+  <!-- cheeks -->
+  <ellipse cx="64" cy="112" rx="10" ry="6" fill="#ffc2d1"/>
+  <ellipse cx="146" cy="112" rx="10" ry="6" fill="#ffc2d1"/>
+  <!-- mouth, open mid-word -->
+  <clipPath id="mouth"><path d="M88 108Q104 102 120 108Q120 134 104 138Q88 134 88 108Z"/></clipPath>
+  <path d="M88 108Q104 102 120 108Q120 134 104 138Q88 134 88 108Z" fill="#16213d"/>
+  <ellipse cx="104" cy="134" rx="11" ry="8" fill="#ff7c97" clip-path="url(#mouth)"/>
+  <!-- the words coming out -->
+  <g fill="none" stroke="#16213d" stroke-width="7" stroke-linecap="round">
+    <path d="M204 70Q214 92 204 114"/>
+    <path d="M220 56Q236 92 220 128"/>
+  </g>
+</g></svg>
+</svg>
