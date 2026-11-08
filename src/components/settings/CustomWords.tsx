@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { notify } from "@/stores/noticeStore";
 import { useSettings } from "../../hooks/useSettings";
+import { isComposingKeyEvent } from "../../lib/utils/keyboard";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { SettingContainer } from "../ui/SettingContainer";
@@ -10,23 +12,31 @@ interface CustomWordsProps {
   grouped?: boolean;
 }
 
+const normalizeCustomWord = (word: string) =>
+  word
+    .replace(/[<>"']/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
 export const CustomWords: React.FC<CustomWordsProps> = React.memo(
   ({ descriptionMode = "tooltip", grouped = false }) => {
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
     const [newWord, setNewWord] = useState("");
     const customWords = getSetting("custom_words") || [];
+    const normalizedWord = normalizeCustomWord(newWord);
 
     const handleAddWord = () => {
-      const trimmedWord = newWord.trim();
-      const sanitizedWord = trimmedWord.replace(/[<>"'&]/g, "");
-      if (
-        sanitizedWord &&
-        !sanitizedWord.includes(" ") &&
-        sanitizedWord.length <= 50 &&
-        !customWords.includes(sanitizedWord)
-      ) {
-        updateSetting("custom_words", [...customWords, sanitizedWord]);
+      if (normalizedWord && normalizedWord.length <= 50) {
+        if (customWords.includes(normalizedWord)) {
+          notify({
+            title: t("settings.advanced.customWords.duplicate", {
+              word: normalizedWord,
+            }),
+          });
+          return;
+        }
+        updateSetting("custom_words", [...customWords, normalizedWord]);
         setNewWord("");
       }
     };
@@ -39,6 +49,7 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
+      if (isComposingKeyEvent(e.nativeEvent)) return;
       if (e.key === "Enter") {
         e.preventDefault();
         handleAddWord();
@@ -67,9 +78,8 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
             <Button
               onClick={handleAddWord}
               disabled={
-                !newWord.trim() ||
-                newWord.includes(" ") ||
-                newWord.trim().length > 50 ||
+                !normalizedWord ||
+                normalizedWord.length > 50 ||
                 isUpdating("custom_words")
               }
               variant="primary"
@@ -81,7 +91,7 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
         </SettingContainer>
         {customWords.length > 0 && (
           <div
-            className={`px-4 p-2 ${grouped ? "" : "rounded-lg border border-mid-gray/20"} flex flex-wrap gap-1`}
+            className={`px-4 p-2 ${grouped ? "" : "rounded-lg border border-line"} flex flex-wrap gap-1`}
           >
             {customWords.map((word) => (
               <Button

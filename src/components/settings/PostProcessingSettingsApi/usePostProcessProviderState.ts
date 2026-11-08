@@ -1,11 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSettings } from "../../../hooks/useSettings";
-import { commands, type PostProcessProvider } from "@/bindings";
+import {
+  commands,
+  type PostProcessApiFormat,
+  type PostProcessProvider,
+} from "@/bindings";
 import type { ModelOption } from "./types";
 import type { DropdownOption } from "../../ui/Dropdown";
 
 type PostProcessProviderState = {
-  enabled: boolean;
   providerOptions: DropdownOption[];
   selectedProviderId: string;
   selectedProvider: PostProcessProvider | undefined;
@@ -15,6 +18,9 @@ type PostProcessProviderState = {
   baseUrl: string;
   handleBaseUrlChange: (value: string) => void;
   isBaseUrlUpdating: boolean;
+  apiFormat: PostProcessApiFormat;
+  handleApiFormatChange: (value: PostProcessApiFormat) => void;
+  isApiFormatUpdating: boolean;
   apiKey: string;
   handleApiKeyChange: (value: string) => void;
   isApiKeyUpdating: boolean;
@@ -37,13 +43,12 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
     isUpdating,
     setPostProcessProvider,
     updatePostProcessBaseUrl,
+    updatePostProcessApiFormat,
     updatePostProcessApiKey,
     updatePostProcessModel,
     fetchPostProcessModels,
     postProcessModelOptions,
   } = useSettings();
-
-  const enabled = settings?.post_process_enabled || false;
 
   // Settings are guaranteed to have providers after migration
   const providers = settings?.post_process_providers || [];
@@ -65,6 +70,7 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
 
   // Use settings directly as single source of truth
   const baseUrl = selectedProvider?.base_url ?? "";
+  const apiFormat = selectedProvider?.api_format ?? "openai";
   const apiKey = settings?.post_process_api_keys?.[selectedProviderId] ?? "";
   const model = settings?.post_process_models?.[selectedProviderId] ?? "";
 
@@ -92,9 +98,31 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
         }
       }
 
-      void setPostProcessProvider(providerId);
+      await setPostProcessProvider(providerId);
+
+      // Auto-fetch available models for the new provider so the model dropdown
+      // reflects what's actually valid. Without this, a stale model value from
+      // a previous provider/base_url can persist and silently 404 at runtime.
+      // Skip when the provider isn't configured yet (no API key / empty base URL)
+      // to avoid unnecessary backend errors.
+      if (providerId !== APPLE_PROVIDER_ID) {
+        const provider = providers.find((p) => p.id === providerId);
+        const apiKey = settings?.post_process_api_keys?.[providerId] ?? "";
+        const hasBaseUrl = (provider?.base_url ?? "").trim() !== "";
+        const hasApiKey = apiKey.trim() !== "";
+
+        if (provider?.id === "custom" ? hasBaseUrl : hasApiKey) {
+          void fetchPostProcessModels(providerId);
+        }
+      }
     },
-    [selectedProviderId, setPostProcessProvider],
+    [
+      selectedProviderId,
+      setPostProcessProvider,
+      fetchPostProcessModels,
+      providers,
+      settings,
+    ],
   );
 
   const handleBaseUrlChange = useCallback(
@@ -108,6 +136,15 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
       }
     },
     [selectedProvider, baseUrl, updatePostProcessBaseUrl],
+  );
+
+  const handleApiFormatChange = useCallback(
+    (value: PostProcessApiFormat) => {
+      if (value !== apiFormat) {
+        void updatePostProcessApiFormat(selectedProviderId, value);
+      }
+    },
+    [apiFormat, selectedProviderId, updatePostProcessApiFormat],
   );
 
   const handleApiKeyChange = useCallback(
@@ -176,6 +213,9 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
   const isBaseUrlUpdating = isUpdating(
     `post_process_base_url:${selectedProviderId}`,
   );
+  const isApiFormatUpdating = isUpdating(
+    `post_process_api_format:${selectedProviderId}`,
+  );
   const isApiKeyUpdating = isUpdating(
     `post_process_api_key:${selectedProviderId}`,
   );
@@ -191,7 +231,6 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
   // No automatic fetching - user must click refresh button
 
   return {
-    enabled,
     providerOptions,
     selectedProviderId,
     selectedProvider,
@@ -201,6 +240,9 @@ export const usePostProcessProviderState = (): PostProcessProviderState => {
     baseUrl,
     handleBaseUrlChange,
     isBaseUrlUpdating,
+    apiFormat,
+    handleApiFormatChange,
+    isApiFormatUpdating,
     apiKey,
     handleApiKeyChange,
     isApiKeyUpdating,

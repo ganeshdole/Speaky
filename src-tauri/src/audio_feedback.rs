@@ -1,8 +1,9 @@
+use crate::audio_toolkit::audio::output_device_name;
 use crate::settings::SoundTheme;
 use crate::settings::{self, AppSettings};
-use cpal::traits::{DeviceTrait, HostTrait};
 use log::{debug, error, warn};
-use rodio::OutputStreamBuilder;
+use rodio::cpal::traits::HostTrait;
+use rodio::DeviceSinkBuilder;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
@@ -21,7 +22,12 @@ fn resolve_sound_path(
 ) -> Option<PathBuf> {
     let sound_file = get_sound_path(settings, sound_type);
     let base_dir = get_sound_base_dir(settings);
-    app.path().resolve(&sound_file, base_dir).ok()
+    match base_dir {
+        tauri::path::BaseDirectory::AppData => {
+            crate::portable::resolve_app_data(app, &sound_file).ok()
+        }
+        _ => app.path().resolve(&sound_file, base_dir).ok(),
+    }
 }
 
 fn get_sound_path(settings: &AppSettings, sound_type: SoundType) -> String {
@@ -94,44 +100,38 @@ fn play_audio_file(
     selected_device: Option<String>,
     volume: f32,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let stream_builder = if let Some(device_name) = selected_device {
+    let sink_builder = if let Some(device_name) = selected_device {
         if device_name == "Default" {
             debug!("Using default device");
-            OutputStreamBuilder::from_default_device()?
+            DeviceSinkBuilder::from_default_device()?
         } else {
             let host = crate::audio_toolkit::get_cpal_host();
-            let devices = host.output_devices()?;
-
-            let mut found_device = None;
-            for device in devices {
-                if device.name()? == device_name {
-                    found_device = Some(device);
-                    break;
-                }
-            }
+            let found_device = host
+                .output_devices()?
+                .find(|device| output_device_name(device).as_deref() == Some(&device_name));
 
             match found_device {
-                Some(device) => OutputStreamBuilder::from_device(device)?,
+                Some(device) => DeviceSinkBuilder::from_device(device)?,
                 None => {
                     warn!("Device '{}' not found, using default device", device_name);
-                    OutputStreamBuilder::from_default_device()?
+                    DeviceSinkBuilder::from_default_device()?
                 }
             }
         }
     } else {
         debug!("Using default device");
-        OutputStreamBuilder::from_default_device()?
+        DeviceSinkBuilder::from_default_device()?
     };
 
-    let stream_handle = stream_builder.open_stream()?;
-    let mixer = stream_handle.mixer();
+    let device_sink = sink_builder.open_stream()?;
+    let mixer = device_sink.mixer();
 
     let file = File::open(path)?;
     let buf_reader = BufReader::new(file);
 
-    let sink = rodio::play(mixer, buf_reader)?;
-    sink.set_volume(volume);
-    sink.sleep_until_end();
+    let player = rodio::play(mixer, buf_reader)?;
+    player.set_volume(volume);
+    player.sleep_until_end();
 
     Ok(())
 }

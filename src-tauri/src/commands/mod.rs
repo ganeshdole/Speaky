@@ -3,7 +3,9 @@ pub mod history;
 pub mod models;
 pub mod transcription;
 
-use crate::settings::{get_settings, write_settings, AppSettings, LogLevel};
+use crate::settings::{
+    get_settings, update_checks_forced_disabled, write_settings, AppSettings, LogLevel,
+};
 use crate::utils::cancel_current_operation;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_opener::OpenerExt;
@@ -16,10 +18,20 @@ pub fn cancel_operation(app: AppHandle) {
 
 #[tauri::command]
 #[specta::specta]
+pub fn is_portable() -> bool {
+    crate::portable::is_portable()
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn is_update_checks_locked() -> bool {
+    update_checks_forced_disabled()
+}
+
+#[tauri::command]
+#[specta::specta]
 pub fn get_app_dir_path(app: AppHandle) -> Result<String, String> {
-    let app_data_dir = app
-        .path()
-        .app_data_dir()
+    let app_data_dir = crate::portable::app_data_dir(&app)
         .map_err(|e| format!("Failed to get app data directory: {}", e))?;
 
     Ok(app_data_dir.to_string_lossy().to_string())
@@ -40,9 +52,7 @@ pub fn get_default_settings() -> Result<AppSettings, String> {
 #[tauri::command]
 #[specta::specta]
 pub fn get_log_dir_path(app: AppHandle) -> Result<String, String> {
-    let log_dir = app
-        .path()
-        .app_log_dir()
+    let log_dir = crate::portable::app_log_dir(&app)
         .map_err(|e| format!("Failed to get log directory: {}", e))?;
 
     Ok(log_dir.to_string_lossy().to_string())
@@ -69,9 +79,7 @@ pub fn set_log_level(app: AppHandle, level: LogLevel) -> Result<(), String> {
 #[specta::specta]
 #[tauri::command]
 pub fn open_recordings_folder(app: AppHandle) -> Result<(), String> {
-    let app_data_dir = app
-        .path()
-        .app_data_dir()
+    let app_data_dir = crate::portable::app_data_dir(&app)
         .map_err(|e| format!("Failed to get app data directory: {}", e))?;
 
     let recordings_dir = app_data_dir.join("recordings");
@@ -87,9 +95,7 @@ pub fn open_recordings_folder(app: AppHandle) -> Result<(), String> {
 #[specta::specta]
 #[tauri::command]
 pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
-    let log_dir = app
-        .path()
-        .app_log_dir()
+    let log_dir = crate::portable::app_log_dir(&app)
         .map_err(|e| format!("Failed to get log directory: {}", e))?;
 
     let path = log_dir.to_string_lossy().as_ref().to_string();
@@ -103,9 +109,7 @@ pub fn open_log_dir(app: AppHandle) -> Result<(), String> {
 #[specta::specta]
 #[tauri::command]
 pub fn open_app_data_dir(app: AppHandle) -> Result<(), String> {
-    let app_data_dir = app
-        .path()
-        .app_data_dir()
+    let app_data_dir = crate::portable::app_data_dir(&app)
         .map_err(|e| format!("Failed to get app data directory: {}", e))?;
 
     let path = app_data_dir.to_string_lossy().as_ref().to_string();
@@ -183,9 +187,21 @@ pub fn initialize_shortcuts(app: AppHandle) -> Result<(), String> {
     // Initialize shortcuts
     crate::shortcut::init_shortcuts(&app);
 
-    // Mark as initialized
+    // Mark as initialized before reconciling the macOS Secure Input fallback.
     app.manage(ShortcutsInitialized);
+    crate::secure_input::reconcile_fallback(&app);
 
     log::info!("Shortcuts initialized successfully");
+    Ok(())
+}
+
+/// Mark onboarding as finished; called when its last screen closes, so quitting
+/// midway resumes the flow.
+#[specta::specta]
+#[tauri::command]
+pub fn complete_onboarding(app: AppHandle) -> Result<(), String> {
+    let mut settings = crate::settings::get_settings(&app);
+    settings.onboarding_completed = true;
+    crate::settings::write_settings(&app, settings);
     Ok(())
 }
