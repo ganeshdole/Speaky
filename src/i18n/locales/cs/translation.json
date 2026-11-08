@@ -25,7 +25,7 @@
     "customModelDescription": "Oficiálně nepodporováno",
     "migration": {
       "title": "Vaše modely potřebují aktualizaci",
-      "description": "Handy nyní používá novější typ modelů. Stáhněte si novou verzi, abyste mohli dál přepisovat. Staré verze budou odstraněny.",
+      "description": "Speaky nyní používá novější typ modelů. Stáhněte si novou verzi, abyste mohli dál přepisovat. Staré verze budou odstraněny.",
       "replaces": "Nahrazuje {{name}}",
       "oldFormat": "Starý formát",
       "failed": "Stahování selhalo",
@@ -62,11 +62,11 @@
     "permissions": {
       "microphone": {
         "name": "Mikrofon",
-        "why": "Aby vás Handy slyšel. Zvuk se mění na text přímo v tomto počítači a nikam se neodesílá."
+        "why": "Aby vás Speaky slyšel. Zvuk se mění na text přímo v tomto počítači a nikam se neodesílá."
       },
       "accessibility": {
         "name": "Zpřístupnění",
-        "why": "Aby vaše zkratka fungovala v každé aplikaci a Handy mohl psát text tam, kde máte kurzor."
+        "why": "Aby vaše zkratka fungovala v každé aplikaci a Speaky mohl psát text tam, kde máte kurzor."
       },
       "errors": {
         "checkFailed": "Nepodařilo se zkontrolovat oprávnění. Zkuste to prosím znovu.",
@@ -80,12 +80,12 @@
       "openSettings": "Otevřít nastavení",
       "allowed": "Povoleno",
       "waiting": "Čeká se",
-      "turnOnMac": "Zapněte Handy v Nastavení systému a pak se vraťte sem.",
+      "turnOnMac": "Zapněte Speaky v Nastavení systému a pak se vraťte sem.",
       "turnOnWindows": "Zapněte přístup k mikrofonu v Nastavení Windows a pak se vraťte sem.",
       "hintBoth": "Pro pokračování povolte obojí",
       "hintMicrophone": "Pro pokračování povolte mikrofon",
       "welcomeBack": "Vítejte zpět. Pokračujeme tam, kde jste skončili.",
-      "relaunch": "Zkratka po tomhle nereaguje? <relaunch>Restartujte Handy</relaunch> a skončíte hned zase tady."
+      "relaunch": "Zkratka po tomhle nereaguje? <relaunch>Restartujte Speaky</relaunch> a skončíte hned zase tady."
     },
     "shell": {
       "back": "Zpět",
@@ -96,11 +96,11 @@
       "title": "Mluvte místo psaní, v jakékoli aplikaci",
       "subtitle": "Vyberte jazyky, ve kterých budete diktovat",
       "languagesLabel": "Jazyky",
-      "noMatch": "Žádný jazyk neodpovídá „{{query}}“. Modely Handy pokrývají zhruba 100 jazyků, další najdete v nastavení.",
+      "noMatch": "Žádný jazyk neodpovídá „{{query}}“. Modely Speaky pokrývají zhruba 100 jazyků, další najdete v nastavení.",
       "appLanguage": "Jazyk aplikace",
       "menusIn": "Nabídky v jazyce: <b>{{language}}</b>",
       "chinese": {
-        "question": "Mluvíte jazykem: {{languages}}. Jaké znaky má Handy psát?",
+        "question": "Mluvíte jazykem: {{languages}}. Jaké znaky má Speaky psát?",
         "label": "Čínské znaky",
         "zh-Hans": "Zjednodušené",
         "zh-Hant": "Tchaj-wan",
@@ -199,7 +199,7 @@
     },
     "try": {
       "title": "Zkuste to!",
-      "subtitle": "Handy je v rohu a provede vás tím",
+      "subtitle": "Speaky je v rohu a provede vás tím",
       "noteLabel": "Poznámka",
       "placeholder": "Nová poznámka",
       "hold": "Podržte <keys/> a mluvte.",
@@ -227,14 +227,14 @@
     },
     "done": {
       "title": "Hotovo",
-      "subMac": "Handy je teď na řádku nabídek. Podržte nebo klepněte na <keys/> v jakékoli aplikaci a mluvte.",
-      "subTray": "Handy je teď v oznamovací oblasti. Podržte nebo klepněte na <keys/> v jakékoli aplikaci a mluvte.",
+      "subMac": "Speaky je teď na řádku nabídek. Podržte nebo klepněte na <keys/> v jakékoli aplikaci a mluvte.",
+      "subTray": "Speaky je teď v oznamovací oblasti. Podržte nebo klepněte na <keys/> v jakékoli aplikaci a mluvte.",
       "hint": "Tohle můžete později změnit v Nastavení",
       "highFiveLabel": "Plácnout si",
-      "atLogin": "Spustit Handy po přihlášení",
+      "atLogin": "Spustit Speaky po přihlášení",
       "finish": "Hotovo",
       "panel": {
-        "name": "Handy",
+        "name": "Speaky",
         "ready": "Připraveno",
         "languages": "Jazyky",
         "model": "Model řeči",
@@ -359,7 +359,7 @@
     "general": {
       "title": "Obecné",
       "shortcut": {
-        "title": "Zkratky Handy",
+        "title": "Zkratky Speaky",
         "description": "Nastavte klávesové zkratky pro spuštění nahrávání řeči na text",
         "loading": "Načítám zkratky...",
         "none": "Žádné zkratky nejsou nastavené",
@@ -401,7 +401,7 @@
       },
       "preferredLanguages": {
         "title": "Preferované jazyky",
-        "description": "Jazyky, kterými mluvíte. Handy podle nich doporučuje modely.",
+        "description": "Jazyky, kterými mluvíte. Speaky podle nich doporučuje modely.",
         "noMatch": "Žádný jazyk neodpovídá „{{query}}“",
         "weak": "Zatím žádný model dobře nerozpoznává: {{languages}}."
       },
@@ -428,17 +428,17 @@
         "fits": "Pro vaše jazyky",
         "untested": "Netestováno"
       },
-      "untestedNote": "Netestováno s Handy. Mohou být pomalejší nebo dělat více chyb.",
+      "untestedNote": "Netestováno s Speaky. Mohou být pomalejší nebo dělat více chyb.",
       "untestedHidden_one": "Další {{count}} model není vyladěn pro diktování. Najdete ho hledáním.",
       "untestedHidden_other": "Dalších {{count}} modelů není vyladěno pro diktování. Najdete je hledáním.",
-      "emptyYours": "Zatím žádné modely. Vyberte některý níže: stáhne se a Handy ho začne používat.",
+      "emptyYours": "Zatím žádné modely. Vyberte některý níže: stáhne se a Speaky ho začne používat.",
       "showMore": "Zobrazit další ({{count}})",
       "showFewer": "Zobrazit méně",
       "download": "Stáhnout a použít",
       "downloadingThenUse": "{{percent}} % z {{total}}, poté se přepne",
       "loading": "Načítání…",
       "deleteAsk": "Smazat {{name}}? Uvolní se {{size}}.",
-      "deleteAskActive": "Smazat {{name}}? Handy nebude moci přepisovat, dokud nevyberete jiný model.",
+      "deleteAskActive": "Smazat {{name}}? Speaky nebude moci přepisovat, dokud nevyberete jiný model.",
       "cancel": "Zrušit",
       "deleteModel": "Smazat {{name}}",
       "cancelDownload": "Zastavit stahování {{name}}",
@@ -452,14 +452,14 @@
         "marks": "? zatím nebylo změřeno. — tomuto jazyku nerozumí."
       },
       "retiredNotice": {
-        "title": "Staré modely už s Handy nefungují",
+        "title": "Staré modely už s Speaky nefungují",
         "description": "Zabírají {{size}} na vašem počítači.",
         "delete": "Smazat modely",
         "deleteFailed": "Některé staré modely se nepodařilo smazat. Podrobnosti najdete v protokolu."
       },
       "rescan": {
         "label": "Znovu prohledat",
-        "tooltip": "Znovu prohledat modely přidané do složky modelů nebo mezipaměti Hugging Face mimo Handy"
+        "tooltip": "Znovu prohledat modely přidané do složky modelů nebo mezipaměti Hugging Face mimo Speaky"
       }
     },
     "languages": {
@@ -553,11 +553,11 @@
       },
       "autostart": {
         "label": "Spouštět při startu",
-        "description": "Automaticky spustit Handy po přihlášení do počítače."
+        "description": "Automaticky spustit Speaky po přihlášení do počítače."
       },
       "showTrayIcon": {
         "label": "Zobrazit ikonu v systémové liště",
-        "description": "Zobrazit ikonu Handy v systémové liště."
+        "description": "Zobrazit ikonu Speaky v systémové liště."
       },
       "overlay": {
         "style": {
@@ -794,7 +794,7 @@
       },
       "updateChecks": {
         "label": "Kontrolovat aktualizace",
-        "description": "Automaticky kontrolovat nové verze Handy",
+        "description": "Automaticky kontrolovat nové verze Speaky",
         "lockedDescription": "Zakázáno systémovou konfigurací (HANDY_DISABLE_UPDATER)"
       },
       "whatsNewPreview": {
@@ -902,7 +902,7 @@
       },
       "keyboardDiagnostic": {
         "title": "Diagnostika klávesnice",
-        "description": "Ověří, zda události klávesnice dorazí do Handy. Zaznamenává se pouze počet událostí — nikdy to, které klávesy stisknete.",
+        "description": "Ověří, zda události klávesnice dorazí do Speaky. Zaznamenává se pouze počet událostí — nikdy to, které klávesy stisknete.",
         "run": "Spustit 10s diagnostiku",
         "running": "Naslouchání… několikrát stiskněte svou zkratku (např. Option+Space)",
         "secureInputLabel": "Secure Input",
@@ -916,7 +916,7 @@
         "mouse": "Myš",
         "verdictBlocked": "Secure Input blokuje události kláves — zkratky obsahující běžnou klávesu nemohou fungovat, dokud se to nevyřeší.",
         "verdictSuspicious": "Dorazily události modifikátorů, ale žádné události kláves — něco klávesy potlačuje, přestože Secure Input hlásí, že je vypnutý. Nahlaste to prosím na GitHubu.",
-        "verdictOk": "Události kláves dorazí do Handy normálně.",
+        "verdictOk": "Události kláves dorazí do Speaky normálně.",
         "verdictNoEvents": "Nebyly zachyceny žádné události — stiskli jste během testu nějaké klávesy?",
         "failed": "Diagnostika selhala: {{error}}"
       }
@@ -925,15 +925,15 @@
       "title": "O aplikaci",
       "version": {
         "title": "Verze",
-        "description": "Aktuální verze Handy"
+        "description": "Aktuální verze Speaky"
       },
       "whatsNewUpdates": {
         "label": "Zobrazovat novinky",
-        "description": "Zobrazovat poznámky k vydání po aktualizacích Handy"
+        "description": "Zobrazovat poznámky k vydání po aktualizacích Speaky"
       },
       "appDataDirectory": {
         "title": "Adresář dat aplikace",
-        "description": "Umístění, kde Handy ukládá data"
+        "description": "Umístění, kde Speaky ukládá data"
       },
       "sourceCode": {
         "title": "Zdrojový kód",
@@ -942,7 +942,7 @@
       },
       "supportDevelopment": {
         "title": "Podpořte vývoj",
-        "description": "Pomozte nám pokračovat ve vývoji Handy",
+        "description": "Pomozte nám pokračovat ve vývoji Speaky",
         "button": "Přispět"
       },
       "acknowledgments": {
@@ -950,7 +950,7 @@
         "ggml": {
           "title": "ggml",
           "description": "Vysoce výkonné inferenční zpracování modelu automatického rozpoznávání řeči Whisper od OpenAI",
-          "details": "Handy používá ggml pro rychlé lokální zpracování řeči na text. Díky skvělé práci Georgiho Gerganova a přispěvatelů."
+          "details": "Speaky používá ggml pro rychlé lokální zpracování řeči na text. Díky skvělé práci Georgiho Gerganova a přispěvatelů."
         }
       }
     }
@@ -971,7 +971,7 @@
     "portableUpdateBrowseButton": "Otevřít GitHub Releases"
   },
   "whatsNew": {
-    "title": "Novinky v Handy v{{version}}"
+    "title": "Novinky v Speaky v{{version}}"
   },
   "common": {
     "playbackPosition": "Pozice přehrávání",
@@ -996,7 +996,7 @@
     "noInputDeviceTitle": "Mikrofon nebyl nalezen",
     "noInputDevice": "Nebylo detekováno žádné zvukové vstupní zařízení. Připojte mikrofon nebo sluchátka a zkuste to znovu.",
     "recordingFailedTitle": "Nepodařilo se spustit nahrávání",
-    "modelLoadFailed": "Handy nemohl načíst tento model. Zkuste to znovu nebo vyberte jiný.",
+    "modelLoadFailed": "Speaky nemohl načíst tento model. Zkuste to znovu nebo vyberte jiný.",
     "modelLoadFailedTitle": "Nepodařilo se načíst model",
     "modelDownloadFailed": "Stahování selhalo",
     "pasteFailedTitle": "Vložení textu se nezdařilo",
@@ -1017,11 +1017,11 @@
   },
   "appLanguage": {
     "title": "Jazyk aplikace",
-    "description": "Změňte jazyk rozhraní Handy"
+    "description": "Změňte jazyk rozhraní Speaky"
   },
   "theme": {
     "title": "Motiv aplikace",
-    "description": "Zvolte, zda má Handy sledovat motiv systému, nebo zůstat světlý či tmavý",
+    "description": "Zvolte, zda má Speaky sledovat motiv systému, nebo zůstat světlý či tmavý",
     "options": {
       "system": "Systém",
       "light": "Světlý",
