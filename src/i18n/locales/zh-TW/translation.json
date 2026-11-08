@@ -62,7 +62,7 @@
     "permissions": {
       "microphone": {
         "name": "麥克風",
-        "why": "讓 Speaky 聽得到您說話。音訊只會在這台電腦上轉成文字，絕不會上傳。"
+        "why": "讓 Speaky 聽得到您說話。"
       },
       "accessibility": {
         "name": "輔助使用",
@@ -134,12 +134,12 @@
       "subtitle": "Use on-device models or connect a cloud provider.",
       "local": {
         "title": "Local (On-Device)",
-        "description": "Download a model and transcribe locally. No API key required.",
+        "description": "Download a model and transcribe on this computer. Audio never leaves it, and no API key is needed.",
         "cta": "Download Local Model"
       },
       "cloud": {
         "title": "Cloud (Groq)",
-        "description": "Use Groq's cloud transcription with your API key.",
+        "description": "Your recordings are sent to Groq for transcription, using your own API key.",
         "cta": "Use Cloud Provider"
       }
     },
