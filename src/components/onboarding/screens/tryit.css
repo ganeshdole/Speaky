@@ -105,8 +105,8 @@
   color: var(--color-ink-3);
 }
 
-/* ---------- Handy on the window's corner ---------- */
-/* The glove on the window's bottom corner, the bubble beside it. Never on the
+/* ---------- Speaky on the window's corner ---------- */
+/* The mascot on the window's bottom corner, the bubble beside it. Never on the
    Windows taskbar. */
 .try-guide {
   position: absolute;
@@ -142,6 +142,15 @@
   display: block;
   transform-origin: 50% 90%;
   transition: transform 460ms var(--ease-glide);
+}
+/* The mascot speaks toward the bubble, which sits on its inline-start side:
+   mirrored in LTR, as drawn in RTL. `scale`, so the pose's transforms and the
+   wave's rotate stay its own. */
+.try-pose svg {
+  scale: -1 1;
+}
+[dir="rtl"] .try-pose svg {
+  scale: 1 1;
 }
 /* A slight lean toward the note; listening nods from it, so pressing never
    swings the glove. */

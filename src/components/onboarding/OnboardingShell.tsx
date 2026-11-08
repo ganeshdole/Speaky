@@ -51,7 +51,7 @@ export const OnboardingShell: React.FC<OnboardingShellProps> = ({
                   key={i}
                   className={`h-[4px] rounded-[2px] transition-[width,background-color] duration-300 ease-glide ${
                     i === progress.index
-                      ? "w-[28px] bg-background-ui"
+                      ? "w-[28px] bg-control-on"
                       : i < progress.index
                         ? "w-[14px] bg-ink-3"
                         : "w-[14px] bg-line"

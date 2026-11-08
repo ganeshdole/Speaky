@@ -8,7 +8,7 @@ interface MascotProps {
   animation?: "wave" | "slap" | null;
 }
 
-// The mascot's own 240×210 box, so `size` is its height and the wave pivots near the bubble's tail.
+// The mascot's own 240×210 box, so `size` is its height; the wave pivots at its bottom centre.
 const BOX_ASPECT = 240 / 210;
 
 /** Speaky's mascot, a speech bubble saying something, optionally animated. */

@@ -80,7 +80,8 @@
   --dark-color-wordmark: var(--dark-color-logo-primary);
   --dark-color-wordmark-stroke: var(--dark-color-text);
 
-  /* Mascot outline and face; dark mode uses the background, not muddy navy. */
+  /* Handy's mascot outline. Speaky's mascot is drawn in its own fixed colours, so
+     nothing reads this now; kept so upstream merges stay simple. */
   --light-color-mascot-line: var(--light-color-logo-stroke);
   --dark-color-mascot-line: var(--dark-color-background);
 
@@ -126,7 +127,12 @@
   );
 
   /* Tokens that do not change between light and dark */
-  --color-background-ui: #2b6be0; /* white text on it reads at 5:1 */
+  --color-background-ui: #2b6be0; /* white text on it reads at 4.9:1 */
+  /* The fill of anything on or picked (a switch, a radio, the progress line, the
+     step dots, a picked card's edge): the deep blue by day. By
+     night that's 2.9:1 on the dark paper, under the 3:1 a control needs, so the
+     light blue (5.8:1) takes over; see the dark overrides. */
+  --color-control-on: var(--color-background-ui);
   --color-mid-gray: #808080;
 
   /* Active palette — defaults to light, follows the OS via the media query
@@ -169,6 +175,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --color-control-on: var(--dark-color-logo-primary);
     --color-text: var(--dark-color-text);
     --color-background: var(--dark-color-background);
     --color-logo-primary: var(--dark-color-logo-primary);
@@ -202,6 +209,7 @@
  * the settings window and the recording overlay alike — honours the override.
  */
 :root[data-theme="light"] {
+  --color-control-on: var(--color-background-ui);
   --color-text: var(--light-color-text);
   --color-background: var(--light-color-background);
   --color-logo-primary: var(--light-color-logo-primary);
@@ -224,6 +232,7 @@
 }
 
 :root[data-theme="dark"] {
+  --color-control-on: var(--dark-color-logo-primary);
   --color-text: var(--dark-color-text);
   --color-background: var(--dark-color-background);
   --color-logo-primary: var(--dark-color-logo-primary);

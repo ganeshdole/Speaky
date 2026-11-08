@@ -64,7 +64,7 @@ export const TranscriptionMode: React.FC<TranscriptionModeProps> = ({
                 }}
                 className={`flex cursor-pointer items-start gap-[14px] rounded-card border-[1.5px] px-[20px] py-[16px] text-start transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-logo-primary ${
                   on
-                    ? "border-background-ui bg-wash"
+                    ? "border-control-on bg-wash"
                     : "border-line-strong hover:bg-wash"
                 }`}
               >

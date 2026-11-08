@@ -11,10 +11,11 @@ Speaky's mascot is a blue speech bubble saying something. It's drawn in the same
 
 ## Colours
 
-| Token                  | Light     | Dark      | Use                                                         |
-| ---------------------- | --------- | --------- | ----------------------------------------------------------- |
-| `logo-primary`         | `#78b3ff` | `#6aa8ff` | Speaky blue: the mascot, the wordmark, accents, the overlay |
-| `logo-stroke` / `plum` | `#16213d` | (text)    | Navy: outlines, keycaps, picked items                       |
-| `background-ui`        | `#2b6be0` | `#2b6be0` | Deep blue behind white text (5:1)                           |
+| Token                  | Light     | Dark      | Use                                                                                                               |
+| ---------------------- | --------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `logo-primary`         | `#78b3ff` | `#6aa8ff` | Speaky blue: the mascot, the wordmark, accents, the overlay                                                       |
+| `control-on`           | `#2b6be0` | `#6aa8ff` | The fill of anything on or picked: switches, radios, the progress line, step dots (3:1 or more against the paper) |
+| `logo-stroke` / `plum` | `#16213d` | (text)    | Navy: outlines, keycaps, picked items                                                                             |
+| `background-ui`        | `#2b6be0` | `#2b6be0` | Deep blue behind white text (4.9:1)                                                                               |
 
 The token names stay Handy's (`logo-primary`, `plum`) so upstream merges stay simple; the values are Speaky's.
