@@ -942,11 +942,17 @@
       },
       "supportDevelopment": {
         "title": "Apoiar o Desenvolvimento",
-        "description": "Ajude-nos a continuar construindo o Speaky",
+        "description": "Ajude-nos a continuar construindo o Handy",
         "button": "Doar"
       },
       "acknowledgments": {
         "title": "Agradecimentos",
+        "handy": {
+          "title": "Handy",
+          "description": "The open source dictation app Speaky is built on, by CJ Pais and contributors",
+          "details": "Nearly everything in Speaky is Handy's work: the local models, the overlay, the shortcuts and pasting into other apps. Speaky adds cloud transcription with Groq. MIT licensed, © CJ Pais.",
+          "button": "View Handy on GitHub"
+        },
         "ggml": {
           "title": "ggml",
           "description": "Inferência de alto desempenho do modelo de reconhecimento automático de fala Whisper da OpenAI",

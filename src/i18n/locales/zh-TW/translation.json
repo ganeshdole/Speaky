@@ -942,11 +942,17 @@
       },
       "supportDevelopment": {
         "title": "支持開發",
-        "description": "幫助我們繼續開發 Speaky",
+        "description": "幫助我們繼續開發 Handy",
         "button": "捐贈"
       },
       "acknowledgments": {
         "title": "致謝",
+        "handy": {
+          "title": "Handy",
+          "description": "The open source dictation app Speaky is built on, by CJ Pais and contributors",
+          "details": "Nearly everything in Speaky is Handy's work: the local models, the overlay, the shortcuts and pasting into other apps. Speaky adds cloud transcription with Groq. MIT licensed, © CJ Pais.",
+          "button": "View Handy on GitHub"
+        },
         "ggml": {
           "title": "ggml",
           "description": "針對 OpenAI Whisper 自動語音辨識模型的高效能推理引擎",

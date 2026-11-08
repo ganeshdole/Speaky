@@ -942,11 +942,17 @@
       },
       "supportDevelopment": {
         "title": "Hỗ trợ phát triển",
-        "description": "Giúp chúng tôi tiếp tục xây dựng Speaky",
+        "description": "Giúp chúng tôi tiếp tục xây dựng Handy",
         "button": "Quyên góp"
       },
       "acknowledgments": {
         "title": "Lời cảm ơn",
+        "handy": {
+          "title": "Handy",
+          "description": "The open source dictation app Speaky is built on, by CJ Pais and contributors",
+          "details": "Nearly everything in Speaky is Handy's work: the local models, the overlay, the shortcuts and pasting into other apps. Speaky adds cloud transcription with Groq. MIT licensed, © CJ Pais.",
+          "button": "View Handy on GitHub"
+        },
         "ggml": {
           "title": "ggml",
           "description": "Suy luận hiệu suất cao của mô hình nhận dạng giọng nói tự động Whisper của OpenAI",

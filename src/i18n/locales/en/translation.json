@@ -942,11 +942,17 @@
       },
       "supportDevelopment": {
         "title": "Support Development",
-        "description": "Help us continue building Speaky",
+        "description": "Speaky is built on Handy. Donations go to its creator, CJ Pais.",
         "button": "Donate"
       },
       "acknowledgments": {
         "title": "Acknowledgments",
+        "handy": {
+          "title": "Handy",
+          "description": "The open source dictation app Speaky is built on, by CJ Pais and contributors",
+          "details": "Nearly everything in Speaky is Handy's work: the local models, the overlay, the shortcuts and pasting into other apps. Speaky adds cloud transcription with Groq. MIT licensed, © CJ Pais.",
+          "button": "View Handy on GitHub"
+        },
         "ggml": {
           "title": "ggml",
           "description": "High-performance tensor library for on-device machine learning inference",
