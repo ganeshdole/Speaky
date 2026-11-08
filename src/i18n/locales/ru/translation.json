@@ -128,6 +128,35 @@
       "timeLeft": "осталось {{time}}",
       "speedLeft": "{{speed}}, осталось {{time}}"
     },
+    "useCloud": "Use cloud provider instead",
+    "mode": {
+      "title": "Choose Your Transcription Mode",
+      "subtitle": "Use on-device models or connect a cloud provider.",
+      "local": {
+        "title": "Local (On-Device)",
+        "description": "Download a model and transcribe locally. No API key required.",
+        "cta": "Download Local Model"
+      },
+      "cloud": {
+        "title": "Cloud (Groq)",
+        "description": "Use Groq's cloud transcription with your API key.",
+        "cta": "Use Cloud Provider"
+      }
+    },
+    "cloud": {
+      "title": "Connect Groq",
+      "subtitle": "Add your Groq API key and choose a model.",
+      "provider": "Provider",
+      "apiKey": "API Key",
+      "apiKeyPlaceholder": "Paste your Groq API key",
+      "model": "Model",
+      "back": "Back",
+      "continue": "Continue",
+      "errors": {
+        "missingApiKey": "Please enter your Groq API key to continue.",
+        "missingModel": "Please choose a model to continue."
+      }
+    },
     "model": {
       "title": "Выберите модель распознавания речи",
       "subtitle": "Модель превращает вашу речь в текст прямо на этом компьютере",
@@ -435,6 +464,30 @@
     },
     "languages": {
       "title": "Языки"
+    },
+    "transcription": {
+      "title": "Transcription Mode",
+      "mode": {
+        "title": "Mode",
+        "description": "Switch between local on-device transcription and Groq cloud transcription.",
+        "options": {
+          "local": "Local",
+          "cloud": "Cloud (Groq)"
+        }
+      },
+      "provider": {
+        "title": "Provider",
+        "description": "Select the cloud transcription provider."
+      },
+      "apiKey": {
+        "title": "API Key",
+        "description": "API key for the selected provider.",
+        "placeholder": "Paste your Groq API key"
+      },
+      "model": {
+        "title": "Model",
+        "description": "Select the speech-to-text model to use."
+      }
     },
     "sound": {
       "title": "Звук",
@@ -757,7 +810,9 @@
         "screens": {
           "welcome": "Приветствие",
           "permissions": "Разрешения",
+          "mode": "Transcription mode",
           "model": "Модель",
+          "cloud": "Cloud setup",
           "demo": "Демо",
           "try": "Попробуйте",
           "done": "Всё готово"
