@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Speaky",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "identifier": "com.ganeshdole.speaky",
   "build": {
     "beforeDevCommand": "bun run dev",
@@ -85,6 +85,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQ2QTA5NkFGNjA2OUI1RTEKUldUaHRXbGdyNWFnUnBxV1JvUll6MnFVSldzRlBuTXdwNCtuNTRLZndNaGNuWFFXZTRQVGhVaFIK",
       "endpoints": [
+        "https://whimsical-avocet-702.convex.site/speaky/latest.json",
         "https://github.com/ganeshdole/Speaky/releases/latest/download/latest.json"
       ]
     }
